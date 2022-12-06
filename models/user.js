@@ -8,33 +8,33 @@ const { handleSaveErrors } = require("../helpers")
 const emailRegexp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
 
 const userSchema = new Schema({
-    name: {
+    password: {
         type: String,
-        required: true,
+        required: [true, "Password is required"],
     },
     email: {
         type: String,
+        required: [true, "Email is required"],
         match: emailRegexp,
         unique: true,
-        required: true,
     },
-    password: {
+    subscription: {
         type: String,
-        minlength: 6,
-        required: true,
+        enum: ["starter", "pro", "business"],
+        default: "starter",
     },
     token: {
         type: String,
-        default: ""
-    }
+        default: null,
+    },
 }, { versionKey: false, timestamps: true })
 
-userSchema.post("save", handleSaveErrors)
+userSchema.post("save", handleSaveErrors);
 
 const registerSchema = Joi.object({
-    name: Joi.string().required(),
     email: Joi.string().pattern(emailRegexp).required(),
     password: Joi.string().min(6).required(),
+    subscription: Joi.string(),
 })
 
 const loginSchema = Joi.object({
@@ -42,9 +42,14 @@ const loginSchema = Joi.object({
     password: Joi.string().min(6).required(),
 })
 
+const subscriptionSchema = Joi.object({
+    subscription: Joi.string().valid("starter", "pro", "business").required(),
+})
+
 const schemas = {
     registerSchema,
     loginSchema,
+    subscriptionSchema,
 }
 
 const User = model("user", userSchema)

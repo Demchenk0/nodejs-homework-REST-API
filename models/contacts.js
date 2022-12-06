@@ -23,11 +23,10 @@ const contactSchema = Schema(
     owner: {
       type: Schema.Types.ObjectId,
       ref: "user",
-      // required: true,
     }
   }, { versionKey: false, timestatmps: true }
 );
-
+// required: true,
 contactSchema.post("save", handleSaveErrors)
 
 

@@ -11,6 +11,9 @@ const { schemas } = require('../../models/user')
 
 const router = express.Router()
 
+router.patch('/', authenticate, validateBody(schemas.subscriptionSchema), ctrlWrapper(ctrl.updateSubscription))
+
+
 router.post('/register', validateBody(schemas.registerSchema), ctrlWrapper(ctrl.register))
 
 router.post('/login', validateBody(schemas.loginSchema), ctrlWrapper(ctrl.login))
