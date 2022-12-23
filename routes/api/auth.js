@@ -19,6 +19,10 @@ router.patch(
     ctrlWrapper(ctrl.updateSubscription)
 );
 
+router.get("/verify/:verificationCode", ctrlWrapper(ctrl.verify));
+
+router.post("/verify", validateBody(schemas.emailSchema), ctrlWrapper(ctrl.resendEmail))
+
 router.post(
     "/register",
     validateBody(schemas.registerSchema),

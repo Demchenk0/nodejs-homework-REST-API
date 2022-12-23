@@ -1,10 +1,11 @@
 const bcrypt = require('bcryptjs')
+const gravatar = require("gravatar")
+const { nanoid } = require("nanoid")
 
 const { User } = require('../../models/user')
 
-const { HttpError } = require('../../helpers')
+const { HttpError, sendEmail, createVerifyEmail } = require('../../helpers')
 
-const gravatar = require("gravatar")
 
 const register = async (req, res) => {
     const { subscription, email, password } = req.body;
@@ -13,11 +14,13 @@ const register = async (req, res) => {
         throw HttpError(409, "Email in use")
     }
 
-    const handPassword = await bcrypt.hash(password, 10)
+    const handPassword = await bcrypt.hash(password, 10);
+    const avatarURL = gravatar.url(email);
+    const verificationCode = nanoid();
+    const newUser = await User.create({ subscription, email, password: handPassword, avatarURL, verificationCode });
 
-    const avatarURL = gravatar.url(email)
-
-    const newUser = await User.create({ subscription, email, password: handPassword, avatarURL });
+    const verifyEmail = createVerifyEmail(email, verificationCode)
+    await sendEmail(verifyEmail)
 
     res.status(201).json({
         "user": {
