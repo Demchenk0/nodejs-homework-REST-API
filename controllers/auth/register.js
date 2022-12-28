@@ -16,10 +16,10 @@ const register = async (req, res) => {
 
     const handPassword = await bcrypt.hash(password, 10);
     const avatarURL = gravatar.url(email);
-    const verificationCode = nanoid();
-    const newUser = await User.create({ subscription, email, password: handPassword, avatarURL, verificationCode });
+    const verificationToken = nanoid();
+    const newUser = await User.create({ subscription, email, password: handPassword, avatarURL, verificationToken });
 
-    const verifyEmail = createVerifyEmail(email, verificationCode)
+    const verifyEmail = createVerifyEmail(email, verificationToken)
     await sendEmail(verifyEmail)
 
     res.status(201).json({

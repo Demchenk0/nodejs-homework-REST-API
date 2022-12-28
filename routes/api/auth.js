@@ -19,7 +19,7 @@ router.patch(
     ctrlWrapper(ctrl.updateSubscription)
 );
 
-router.get("/verify/:verificationCode", ctrlWrapper(ctrl.verify));
+router.get("/verify/:verificationToken", ctrlWrapper(ctrl.verify));
 
 router.post("/verify", validateBody(schemas.emailSchema), ctrlWrapper(ctrl.resendEmail))
 

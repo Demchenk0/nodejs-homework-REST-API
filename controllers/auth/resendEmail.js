@@ -1,6 +1,6 @@
 const { User } = require("../../models/user")
 
-const { HttpError, sendEmail } = require('../../helpers')
+const { HttpError, sendEmail, createVerifyEmail } = require('../../helpers')
 
 const resendEmail = async (req, res) => {
     const { email } = req.body;
@@ -9,15 +9,16 @@ const resendEmail = async (req, res) => {
         throw HttpError(404)
     }
     if (user.verify) {
-        throw HttpError(400, "Email alredy verify")
+        throw HttpError(400, "Verification has already been passed")
     }
 
 
-    const verifyEmail = createVerifyEmail(email, user.verificationCode)
+    const verifyEmail = createVerifyEmail(email, user.verificationToken)
+
     await sendEmail(verifyEmail)
 
     res.json({
-        message: "Verify email resend ssuccess"
+        message: "Verify email sent"
     })
 
 }
